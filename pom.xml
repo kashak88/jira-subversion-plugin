@@ -118,20 +118,20 @@
                             org.apache.lucene.analysis.standard*;version="3.3.0",
                             org.slf4j*;version="1.6.4",
                             org.apache.commons.lang*;version="2.5",
-                            com.atlassian.jira*;version="7.0",
-                            com.atlassian.jira.extension*;version="7.0",
-                            com.atlassian.jira.service*;version="7.0",
-                            com.atlassian.configurable*;version="7.0",
-                            com.atlassian.jira.issue.tabpanels*;version="7.0",
-                            com.atlassian.jira.plugin.issuetabpanel*;version="7.0",
-                            com.atlassian.jira.plugin.projectpanel*;version="7.0",
-                            com.atlassian.jira.plugin.projectpanel.impl*;version="7.0",
-                            com.atlassian.jira.web.action*;version="7.0",
-                            com.atlassian.jira.web.action.issue*;version="7.0",
-                            com.atlassian.jira.web.bean*;version="7.0",
-                            com.atlassian.jira.project*;version="7.0",
-                            com.atlassian.jira.project.browse*;version="7.0",
-                            com.atlassian.jira.component*;version="7.0",
+                            com.atlassian.jira*;version="8.0",
+                            com.atlassian.jira.extension*;version="8.0",
+                            com.atlassian.jira.service*;version="8.0",
+                            com.atlassian.configurable*;version="8.0",
+                            com.atlassian.jira.issue.tabpanels*;version="8.0",
+                            com.atlassian.jira.plugin.issuetabpanel*;version="8.0",
+                            com.atlassian.jira.plugin.projectpanel*;version="8.0",
+                            com.atlassian.jira.plugin.projectpanel.impl*;version="8.0",
+                            com.atlassian.jira.web.action*;version="8.0",
+                            com.atlassian.jira.web.action.issue*;version="8.0",
+                            com.atlassian.jira.web.bean*;version="8.0",
+                            com.atlassian.jira.project*;version="8.0",
+                            com.atlassian.jira.project.browse*;version="8.0",
+                            com.atlassian.jira.component*;version="8.0",
                             com.atlassian.core.util*;version="4.6.2",
                             com.atlassian.plugin.event.events;version="3.0.5",
                             org.apache.commons.collections.map*;version="3.2.1",
@@ -174,7 +174,7 @@
             </plugin>
             <plugin>
                 <artifactId>maven-release-plugin</artifactId>
-                <version>2.5.1</version>
+                <version>2.5.3</version>
                 <configuration>
                     <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
                 </configuration>
@@ -326,8 +326,8 @@
         <jira.software.application.version>${atlassian.product.version}</jira.software.application.version>
         <jdkLevel>1.8</jdkLevel>
         <amps.version>8.0.0</amps.version>
-        <beehive.version>0.1.3</beehive.version>
-        <testkit.version>7.0.84</testkit.version>
+        <beehive.version>1.1.0</beehive.version>
+        <testkit.version>8.0.0</testkit.version>
     </properties>
     <profiles>
         <profile>
