@@ -1,0 +1,37 @@
+<html>
+  <head>
+    <title>$action.getText("subversion.add.repository")</title>
+    <meta name="decorator" content="admin" />
+  </head>
+  <body>
+			<form onsubmit="if (this.submitted) return false; this.submitted = true; return true" name="jiraform" method="post" action="AddSubversionRepository.jspa"/>
+				<table width=100% cellpadding=10 cellspacing=0 border=0>
+					<tr>
+						<td>
+							 <table class="jiraform maxWidth">
+								 <tbody>
+									 <tr>
+										 <td class="jiraformheader" colspan="2">
+											 <h3 class="formtitle">$action.getText("subversion.add.repository")</h3>
+										 </td>
+									 </tr>
+									 <tr>
+										 <td class="jiraformheader" colspan="2">
+											 Use this page to add a new Subversion repository.
+										</td>
+									 </tr>
+									 #parse("templates/plugins/subversion/configuration/properties.vm")
+								 <tr>
+										 <td colspan="2" class="fullyCentered jiraformfooter" >
+								 <input type="submit" name="add" value="$action.getText("common.forms.add")" accesskey="S" title="Press Alt+Shift+S to submit form" class="spaced" />
+											 <input id="cancelButton"  type="button" accesskey="`" title="Cancel (Alt+Shift + `)" name="ViewSubversionRepositories.jspa" value="Cancel" onclick="location.href='ViewSubversionRepositories.jspa'" />
+										 </td>
+									 </tr>
+								 </tbody>
+							 </table>
+						 </td>
+					 </tr>
+				 </table>
+			</form>
+  </body>
+</html>

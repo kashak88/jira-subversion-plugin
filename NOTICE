@@ -1,0 +1,8 @@
+Atlassian JIRA Subversion Plugin
+Copyright 2009 Atlassian Pty Ltd
+
+This plugin uses SVNKit library.
+More information: http://svnkit.com/
+
+This plugin uses trilead-ssh2 library.
+More information: https://github.com/jenkinsci/trilead-ssh2

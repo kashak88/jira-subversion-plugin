@@ -1,0 +1,63 @@
+#disable_html_escaping()
+<table cellpadding="2" cellspacing="0" border="0" width="100%">
+<tr>
+    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("subversion.issue-tab.repository")</b></td>
+    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("subversion.issue-tab.revision")</b></td>
+    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("subversion.issue-tab.date")</b></td>
+    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("subversion.issue-tab.user")</b></td>
+    <td bgcolor="#f0f0f0"><b>$i18n.getText("subversion.issue-tab.message")</b></td>
+</tr>
+<tr>
+    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$textutils.htmlEncode( $svn.repositoryDisplayName )</td>
+    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$svn.linkRenderer.getRevisionLink($svn.revision)</td>
+    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$!svn.revision.date</td>
+    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$textutils.htmlEncode( $stringUtils.defaultString( $svn.revision.author ) )</td>
+    <td bgcolor="#ffffff">#makelinkedhtml($svn.revision.getMessage().trim())</td>
+</tr>
+<tr>
+    <td bgcolor="#f0f0f0"><b>$i18n.getText("subversion.issue-tab.files-changed")</b></td>
+</tr>
+<tr>
+    <td bgcolor="#ffffff">
+        #foreach ($changePath in $svn.revision.changedPaths)
+            #if ($svn.isDeleted($changePath) == true)
+                <font color="#990000" size="-2"><b title="Delete">$i18n.getText("subversion.issue-tab.deleted")</b></font>
+            #elseif ($svn.isAdded($changePath) == true)
+                <font color="#009900" size="-2"><b title="Add">$i18n.getText("subversion.issue-tab.added")</b></font>
+            #elseif ($svn.isModified($changePath) == true)
+                <font color="#999933" size="-2"><b title="Modify">$i18n.getText("subversion.issue-tab.modified")</b></font>
+            #elseif ($svn.isReplaced($changePath) == true)
+                <font color="#999933" size="-2"><b title="Replace">$i18n.getText("subversion.issue-tab.replaced")</b></font>
+            #else
+                $changePath.svn
+            #end
+            $svn.linkRenderer.getChangePathLink($svn.revision, $changePath)
+
+            #if ($changePath.copyPath)
+                (from $svn.linkRenderer.getCopySrcLink($svn.revision, $changePath))
+            #end
+
+            <br>
+        #end
+    </td>
+</tr>
+</table>
+#set ( $innerClassSeparator = "$" )
+#set ( $lastSubversionRevisionActionName = "LastSubversionRevisionActionInPage" )
+#if ($svn.class.name == "com.atlassian.jira.plugin.ext.subversion.issuetabpanels.changes.SubversionRevisionsTabPanel${innerClassSeparator}${lastSubversionRevisionActionName}")
+    <div class="plugin_subversion_showmore_issuetab">
+        <fieldset style="display: none">
+            <input type="hidden" name="issueKey" value="">
+            <input type="hidden" name="page" value="com.atlassian.jira.plugin.ext.subversion:subversion-commits-tabpanel">
+            <input type="hidden" name="decorator" value="none">
+            #if ( $req.getParameter("pageIndex") )
+                #set ( $newPageIndex = $textutils.parseInt( $req.getParameter("pageIndex") ) + 1 )
+                <input type="hidden" name="pageIndex" value="$newPageIndex">
+            #else
+                <input type="hidden" name="pageIndex" value="1">
+            #end
+            <input type="hidden" name="pageSize" value="$!req.getParameter('pageSize')">
+        </fieldset>
+        <input class="plugin_subversion_showmore_issuetab_button" type="button" value="More">
+    </div>
+#end

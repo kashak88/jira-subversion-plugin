@@ -1,0 +1,175 @@
+#disable_html_escaping()
+#if (!$req.getParameter("noscript"))
+    <script src="$webResourceManager.getStaticPluginResource('com.atlassian.jira.plugin.ext.subversion:subversion-resource-js', 'subversion.js')"></script>
+#end
+<div class="projectPanel">
+    <div class="header">
+        <h3 class="formtitle">$i18n.getText("subversion.project-tab.header")</h3>
+    </div>
+
+    <table width="100%" class="versionBanner">
+        <tr>
+                #if ($versionNumber && $versionNumber > 0)
+                    <td class="colHeaderLink" align="left" width="3%" rowspan="2">
+                        #versionStatus($selectedVersion 24)
+                    </td>
+                    <td class="colHeaderLink" align="left">
+                        <font size="3">
+                          <a href="$req.contextPath/secure/IssueNavigator.jspa?reset=true&pid=$project.id&fixfor=$selectedVersion.id"
+                             title="$action.getText("browseproject.getmoreinfo")">
+                        <b><u>$textutils.htmlEncode( $selectedVersion.name )</u></b></a></font>
+                        <span class="noWrap">(#if ($selectedVersion.releaseDate)
+                            #versionReleaseDate($versionManager $selectedVersion) |
+                        #end
+                        <a href="$req.contextPath/secure/ReleaseNote.jspa?projectId=$project.id&styleName=Html&version=$selectedVersion.id"
+                            class="subText">$action.getText("common.concepts.releasenotes")</a> )</span>
+                    </td>
+                #else
+                    <td class="formtitle" valign="top">
+                    <font size=3><b>
+                    #if (!$versionNumber || $versionNumber == -1)
+                        $i18n.getText("subversion.project-tab.all-versions")
+                    #else
+                        #if ($versionNumber && $versionNumber == -2)
+                            $i18n.getText("subversion.project-tab.released-versions")
+                        #else
+                            #if ($versionNumber && $versionNumber == -3)
+                                $i18n.getText("subversion.project-tab.unreleased-versions")
+                            #end
+                        #end
+                    #end
+                    </b></font>
+
+                    </td>
+                #end
+            </td>
+
+            <!-- Version drop-down list -->
+            <td align="right" valign="center">
+                <form name="versionSelectForm" class="plugin_subversion_versionselect_form" action="$req.contextPath/$urlPrefix/$projectKey?selectedItem=com.atlassian.jira.plugin.ext.subversion:subversion-project-tab" method="GET">
+                  $i18n.getText("subversion.project-tab.select-version")
+                  <select name="selectedVersion">
+                    <option value="-1"
+                      #if (!$selectedVersion)
+                        selected="selected"
+                      #end
+                    >$i18n.getText("subversion.project-tab.all-versions")</option>
+                    #if ($unreleasedVersions && $unreleasedVersions.size() > 0)
+                        <optgroup label="$i18n.getText("subversion.project-tab.released-versions")">
+                            #foreach ($version in $releasedVersions)
+                              <option value="$version.id"
+                              #if ($selectedVersion && $versionNumber && $versionNumber > 0 && $selectedVersion.id == $version.id)
+                                selected="selected"
+                              #end
+                              >$textutils.htmlEncode( $version.name )</option>
+                            #end
+                        </optgroup>
+                    #end
+                    #if ($unreleasedVersions && $unreleasedVersions.size() > 0)
+                        <optgroup label="$i18n.getText("subversion.project-tab.unreleased-versions")">
+                            #foreach ($version in $unreleasedVersions)
+                              <option value="$version.id"
+                              #if ($selectedVersion && $versionNumber && $versionNumber > 0 && $selectedVersion.id == $version.id)
+                                selected="selected"
+                              #end
+                              >$textutils.htmlEncode( $version.name )</option>
+                            #end
+                        </optgroup>
+                    #end
+                  </select>
+                    <input type="hidden" name="selectedItem" value="com.atlassian.jira.plugin.ext.subversion:subversion-project-tab"/>
+                </form>
+            </td>
+            <!-- End of version drop-down -->
+        </tr>
+        #if ($selectedVersion && $versionNumber && $versionNumber > 0)
+            <tr>
+                <td colspan="2">
+                    <span class="subText">$!textutils.htmlEncode( $selectedVersion.description )</span>
+                </td>
+            </tr>
+        #end
+    </table>
+    <!-- End of header -->
+
+    <!-- The commit table -->
+    <table class="plugin_subversion_projectcommits_table" cellpadding="2" cellspacing="0" border="0" width="100%">
+        #if ($commits && $commits.size() > 0)
+            #foreach ($commit in $commits)
+
+                <tr>
+                    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("subversion.project-tab.repository")</b></td>
+                    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("subversion.project-tab.revision")</b></td>
+                    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("subversion.project-tab.date")</b></td>
+                    <td bgcolor="#f0f0f0" width="10%"><b>$i18n.getText("subversion.project-tab.user")</b></td>
+                    <td bgcolor="#f0f0f0"><b>$i18n.getText("subversion.project-tab.message")</b></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$textutils.htmlEncode( $commit.repositoryDisplayName )</td>
+                    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$commit.linkRenderer.getRevisionLink($commit.revision)</td>
+                    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$!commit.revision.date</td>
+                    <td bgcolor="#ffffff" width="10%" valign="top" rowspan="3">$textutils.htmlEncode( $stringUtils.defaultString( $commit.revision.author ) )</td>
+                    <td bgcolor="#ffffff">#makelinkedhtml($commit.revision.getMessage().trim())</td>
+                </tr>
+                <tr>
+                    <td bgcolor="#f0f0f0"><b>$i18n.getText("subversion.project-tab.files-changed")</b></td>
+                </tr>
+                <tr>
+                    <td bgcolor="#ffffff">
+                        #foreach ($changePath in $commit.revision.changedPaths)
+                            #if ($commit.isDeleted($changePath) == true)
+                                <font color="#990000" size="-2"><b title="Delete">$i18n.getText("subversion.project-tab.deleted")</b></font>
+                            #elseif ($commit.isAdded($changePath) == true)
+                                <font color="#009900" size="-2"><b title="Add">$i18n.getText("subversion.project-tab.added")</b></font>
+                            #elseif ($commit.isModified($changePath) == true)
+                                <font color="#999933" size="-2"><b title="Modify">$i18n.getText("subversion.project-tab.modified")</b></font>
+                            #elseif ($commit.isReplaced($changePath) == true)
+                                <font color="#999933" size="-2"><b title="Replace">$i18n.getText("subversion.project-tab.replaced")</b></font>
+                            #else
+                                $changePath.action
+                            #end
+                            $commit.linkRenderer.getChangePathLink($commit.revision, $changePath)
+
+                            #if ($changePath.copyPath)
+                                (from $commit.linkRenderer.getCopySrcLink($commit.revision, $changePath))
+                            #end
+
+                            <br />
+                        #end
+                    </td>
+                </tr>
+            #end
+        #else
+           <tr><td><p class="bluetext">$i18n.getText("subversion.project-tab.no-commits")</p></td></tr>
+        #end
+        #if ( $moreAvailable )
+            <tr>
+                <td colspan="5">
+                    <div class="plugin_subversion_showmore_projectab" style="text-align: center; padding: 5px;">
+                        <fieldset style="display: none">
+                            <input type="hidden" name="projectKey" value="$projectKey">
+                            <input type="hidden" name="selectedTab" value="com.atlassian.jira.plugin.ext.subversion:subversion-project-tab">
+                            <input type="hidden" name="decorator" value="none">
+                            <input type="hidden" name="noscript" value="true">
+                            <input type="hidden" name="contentOnly" value="true">
+
+                            #if ( $versionNumber )
+                                <input type="hidden" name="selectedVersion" value="$versionNumber">
+                            #else
+                                <input type="hidden" name="selectedVersion" value="-1">
+                            #end
+                            #if ( $req.getParameter("pageIndex") )
+                                #set ( $newPageIndex = $textutils.parseInt( $req.getParameter("pageIndex") ) + 1 )
+                                <input type="hidden" name="pageIndex" value="$newPageIndex">
+                            #else
+                                <input type="hidden" name="pageIndex" value="1">
+                            #end
+                            <input type="hidden" name="pageSize" value="$!req.getParameter('pageSize')">
+                        </fieldset>
+                        <input class="plugin_subversion_showmore_projectab_button" type="button" value="$i18n.getText('common.concepts.more')">
+                    </div>
+                </td>
+            </tr>
+        #end
+    </table>
+</div>

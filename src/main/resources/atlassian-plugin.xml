@@ -1,0 +1,85 @@
+<atlassian-plugin key="${atlassian.plugin.key}" name="${project.name}" pluginsVersion="2">
+
+	<plugin-info>
+        <description>${project.description}</description>
+        <vendor name="${project.organization.name}" url="${project.organization.url}"/>
+        <version>${project.version}</version>
+        <application-version min="${atlassian.plugin.application.version.min}"/>
+	<param name="atlassian-data-center-compatible">true</param>
+    </plugin-info>
+
+    <resource type="i18n" name="SubversionActionSupport" location="com.atlassian.jira.plugin.ext.subversion.action.SubversionActionSupport" />
+    <!-- this property file contains i18n keys for the panel -->
+    <resource type="i18n" name="projecttabpanels-subversion_jira_plugin" location="templates.plugins.subversion.projecttabpanels.subversion_jira_plugin"/>
+    <resource type="i18n" name="issuetabpanels-subversion_jira_plugin" location="templates.plugins.subversion.issuetabpanels.subversion_jira_plugin"/>
+
+    <issue-tabpanel key="subversion-commits-tabpanel" name="Subversion Changes Tab Panel" class="com.atlassian.jira.plugin.ext.subversion.issuetabpanels.changes.SubversionRevisionsTabPanel">
+        <description>Show Subversion commits related to an issue in an issue tab panel.</description>
+        <label key="subversion.issue-tab.label" />
+        <resource type="velocity" name="view" location="templates/plugins/subversion/issuetabpanels/subversion-commits-view.vm"/>
+        <supports-ajax-load>true</supports-ajax-load>
+    </issue-tabpanel>
+
+    <component-import key="eventPublisher" interface="com.atlassian.event.api.EventPublisher" />
+
+    <project-tabpanel key="subversion-project-tab" name="Subversion Commits Project Tab"
+                      class="com.atlassian.jira.plugin.ext.subversion.projecttabpanels.SubversionProjectTabPanel">
+        <description key="subversion.project-tab.description"/>
+        <label key="subversion.project-tab.label" />
+        <!-- this is a number defining the order of all project tabs. The system panels are 10, 20, 30 and 40. -->
+        <order>50</order>
+        <!-- this template produces the HTML for the panel -->
+        <resource type="velocity" name="view" location="templates/plugins/subversion/projecttabpanels/subversion-project-tab.vm"/>
+    </project-tabpanel>
+
+    <web-item key="subversion-repositories-link" name="Subversion repositories link on administrators page" section="admin_plugins_menu/source_control" weight="95">
+        <label key="subversion.repositories" />
+        <condition class="com.atlassian.jira.plugin.webfragment.conditions.JiraGlobalPermissionCondition">
+            <param name="permission">admin</param>
+        </condition>
+        <link linkId="subversion-repositories">/secure/ViewSubversionRepositories.jspa</link>
+    </web-item>
+
+    <webwork1 key="SubversionRepositoriesManagement" name="Subversion repositories management" class="java.lang.Object">
+        <actions>
+            <action name="com.atlassian.jira.plugin.ext.subversion.action.ViewSubversionRepositoriesAction" alias="ViewSubversionRepositories">
+                <view name="success">/templates/plugins/subversion/configuration/list.vm</view>
+            </action>
+            <action name="com.atlassian.jira.plugin.ext.subversion.action.AddSubversionRepositoryAction" alias="AddSubversionRepository">
+                <view name="input">/templates/plugins/subversion/configuration/add.vm</view>
+                <view name="error">/templates/plugins/subversion/configuration/add.vm</view>
+                <view name="permissionviolation">/templates/plugins/subversion/configuration/no-privilege.vm</view>
+            </action>
+            <action name="com.atlassian.jira.plugin.ext.subversion.action.UpdateSubversionRepositoryAction" alias="UpdateSubversionRepository">
+                <view name="input">/templates/plugins/subversion/configuration/edit.vm</view>
+                <view name="permissionviolation">/templates/plugins/subversion/configuration/no-privilege.vm</view>
+                <view name="error">/templates/plugins/subversion/configuration/edit.vm</view>
+            </action>
+            <action name="com.atlassian.jira.plugin.ext.subversion.action.DeleteSubversionRepositoryAction" alias="DeleteSubversionRepository">
+							<view name="input">/templates/plugins/subversion/configuration/delete.vm</view>
+                            <view name="permissionviolation">/templates/plugins/subversion/configuration/no-privilege.vm</view>
+							<view name="error">/templates/plugins/subversion/configuration/delete.vm</view>
+            </action>
+            <action name="com.atlassian.jira.plugin.ext.subversion.action.ActivateSubversionRepositoryAction" alias="ActivateSubversionRepository">
+                <view name="permissionviolation">/templates/plugins/subversion/configuration/no-privilege.vm</view>
+                <view name="success">/templates/plugins/subversion/configuration/activate.vm</view>
+            </action>
+        </actions>
+    </webwork1>
+
+    <web-resource key="subversion-resource-js" name="Subversion JavaScript">
+        <context>jira.view.issue</context>
+        <dependency>jira.webresources:jira-global</dependency>
+        <dependency>${atlassian.plugin.key}:subversion-resource-css</dependency>
+        <resource type="download" name="subversion.js" location="templates/plugins/subversion/scripts/subversion.js"/>
+    </web-resource>
+
+    <web-resource key="subversion-resource-css" name="Subversion Plugin CSS">
+        <resource type="download" name="subversion.css" location="templates/plugins/subversion/css/subversion.css"/>
+        <resource type="download" name="subversion-ie.css" location="templates/plugins/subversion/css/subversion-ie.css">
+            <param name="ieonly" value="true"/>
+            <param name="title" value="IE styles for JIRA Subversion plugin"/>
+        </resource>
+    </web-resource>
+
+</atlassian-plugin>

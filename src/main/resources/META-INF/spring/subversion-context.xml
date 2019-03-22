@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:osgi="http://www.springframework.org/schema/osgi" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd"
+	default-autowire="autodetect">
+	
+	<beans:bean id="subversionManager" class="com.atlassian.jira.plugin.ext.subversion.MultipleSubversionRepositoryManagerImpl">
+		<beans:constructor-arg index="0" ref="versionManager" />
+		<beans:constructor-arg index="1" ref="issueManager" />
+		<beans:constructor-arg index="2" ref="permissionManager" />
+		<beans:constructor-arg index="3" ref="changeHistoryManager" />
+		<beans:constructor-arg index="4" ref="jiraPropertySetFactory" />
+		<beans:constructor-arg index="5" ref="indexPathManager" />
+		<beans:constructor-arg index="6" ref="cacheManager" />
+		<beans:constructor-arg index="7" ref="clusterLockService" />
+		<beans:constructor-arg index="8" ref="clusterMessagingService" />
+	</beans:bean>
+
+    <beans:bean id="revisionIndexer" class="com.atlassian.jira.plugin.ext.subversion.revisions.RevisionIndexer">
+        <beans:constructor-arg index="0" ref="subversionManager" />
+        <beans:constructor-arg index="1" ref="versionManager" />
+        <beans:constructor-arg index="2" ref="issueManager" />
+        <beans:constructor-arg index="3" ref="permissionManager" />
+        <beans:constructor-arg index="4" ref="changeHistoryManager" />
+        <beans:constructor-arg index="5" ref="indexPathManager" />
+    </beans:bean>
+
+    <beans:bean id="schedulerLauncher" class="com.atlassian.jira.plugin.ext.subversion.revisions.scheduling.clustersafe.SchedulerLauncher">
+        <beans:constructor-arg index="0" ref="eventPublisher" />
+        <beans:constructor-arg index="1" ref="serviceManager" />
+        <beans:constructor-arg index="2" ref="jiraPropertySetFactory" />
+    </beans:bean>
+
+    <beans:bean id="preuninstallcleanup" class="com.atlassian.jira.plugin.ext.subversion.revisions.scheduling.clustersafe.PreUninstallCleanup">
+        <beans:constructor-arg index="0" ref="eventPublisher" />
+        <beans:constructor-arg index="1" ref="serviceManager" />
+    </beans:bean>
+
+    <osgi:service ref="subversionManager">
+        <osgi:interfaces>
+            <value>com.atlassian.sal.api.lifecycle.LifecycleAware</value>
+            <value>com.atlassian.jira.plugin.ext.subversion.MultipleSubversionRepositoryManager</value>
+        </osgi:interfaces>
+    </osgi:service>
+
+    <osgi:service ref="schedulerLauncher" interface="com.atlassian.sal.api.lifecycle.LifecycleAware"/>
+
+</beans:beans>

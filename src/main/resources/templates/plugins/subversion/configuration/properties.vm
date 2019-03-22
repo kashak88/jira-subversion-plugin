@@ -1,0 +1,116 @@
+#controlHeader($action 'displayName' $action.getText("subversion.repository.display.name") true $displayParameters.noHeader)
+<input type="text" id="displayName" name="displayName" #if ($displayName) value="$textutils.htmlEncode( $displayName )" #end />
+#controlFooter($action "" $displayParameter.noHeader)
+
+<tr>
+  <td colspan=2 bgcolor=f0f0f0><b>$action.getText("subversion.repository.details")</b></td>
+</tr>
+
+#controlHeader($action 'root' $action.getText("subversion.repository.root") true $displayParameters.noHeader)
+<input type="text" id="root" name="root" #if ($root) value="$textutils.htmlEncode( $root )" #end size="60" />
+#controlFooter($action $action.getText("subversion.repository.root.description") $displayParameter.noHeader)
+
+#controlHeader($action 'revisionIndexing' $action.getText("subversion.repository.revision.indexing") true $displayParameters.noHeader)
+<input id="revisionIndexingTrue" type="radio" value="true" name="revisionIndexing" #if ($revisionIndexing) checked="checked" #end><label for="revisionIndexingTrue">$action.getText("subversion.repository.revision.indexing.enabled")</label>
+&nbsp;
+<input id="revisionIndexingFalse" type="radio" value="false" name="revisionIndexing" #if (!$revisionIndexing) checked="checked" #end><label for="revisionIndexingFalse">$action.getText("subversion.repository.revision.indexing.disabled")</label>
+#controlFooter($action '' $displayParameter.noHeader)
+
+#controlHeader($action 'revisionCacheSize' $action.getText("subversion.repository.revision.cache.size") true $displayParameters.noHeader)
+<input type="text" id="revisionCacheSize" name="revisionCacheSize" #if ($revisionCacheSize) value="$revisionCacheSize" #end />
+#controlFooter($action $action.getText("subversion.repository.revision.cache.size.description") $displayParameters.noHeader)
+
+#controlHeader($action 'username' $action.getText("subversion.repository.username") false $displayParameters.noHeader)
+<input type="text" id="username" name="username" #if ($username) value="$textutils.htmlEncode( $username )" #end />
+#controlFooter($action '' $displayParameters.noHeader)
+
+#controlHeader($action 'password' $action.getText("subversion.repository.password") false $displayParameters.noHeader)
+<input type="password" id="password" name="password" />
+#controlFooter($action '' $displayParameters.noHeader)
+
+#controlHeader($action 'privateKeyFile' $action.getText("subversion.repository.private.key.file") false $displayParameters.noHeader)
+<input type="text" id="privateKeyFile" name="privateKeyFile" #if ($privateKeyFile) value="$textutils.htmlEncode( $privateKeyFile )" #end size="60" />
+#controlFooter($action $action.getText("subversion.repository.private.key.file.description") $displayParameters.noHeader)
+
+<tr>
+    <td colspan=2 bgcolor=f0f0f0><b>$action.getText("subversion.repository.web.linking")</b></td>
+</tr>
+
+<script language="JavaScript" type="text/javascript">
+    var webLinkTypes = new Array();
+    #foreach ($webLinkType in $webLinkTypes)
+        webLinkTypes["$webLinkType.key"] = new Array();
+        webLinkTypes["$webLinkType.key"]["viewFormat"] = '$action.escapeJavaScript( $webLinkType.viewFormat )';
+        webLinkTypes["$webLinkType.key"]["changesetFormat"] = '$action.escapeJavaScript( $webLinkType.changesetFormat )';
+        webLinkTypes["$webLinkType.key"]["fileAddedFormat"] = '$action.escapeJavaScript( $webLinkType.fileAddedFormat )';
+        webLinkTypes["$webLinkType.key"]["fileModifiedFormat"] = '$action.escapeJavaScript( $webLinkType.fileModifiedFormat )';
+        webLinkTypes["$webLinkType.key"]["fileReplacedFormat"] = '$action.escapeJavaScript( $webLinkType.fileReplacedFormat )';
+        webLinkTypes["$webLinkType.key"]["fileDeletedFormat"] = '$action.escapeJavaScript( $webLinkType.fileDeletedFormat )';
+    #end
+
+    function getHost(root)
+    {
+        var start = root.indexOf("://") + 3;
+        var end = root.indexOf("/", start);
+        return "http://" + root.substring(start, end);
+    }
+
+    function setWebLinkFormat(linkType, selectedType)
+    {
+        if (selectedType)
+        {
+            var webLink = webLinkTypes[selectedType][linkType];
+            webLink = webLink.replace("\${root}", getHost(document.getElementById("root").value));
+            document.getElementById(linkType).value = webLink;
+        }
+        else
+        {
+            document.getElementById(linkType).value = "";
+        }
+    }
+
+    function handleWebLinkTypeChanged()
+    {
+        var typeSelector = document.getElementById('webLinkType');
+        var selectedType = typeSelector.options[typeSelector.selectedIndex].value;
+        setWebLinkFormat("viewFormat", selectedType);
+        setWebLinkFormat("changesetFormat", selectedType);
+        setWebLinkFormat("fileAddedFormat", selectedType);
+        setWebLinkFormat("fileModifiedFormat", selectedType);
+        setWebLinkFormat("fileReplacedFormat", selectedType);
+        setWebLinkFormat("fileDeletedFormat", selectedType);
+    }
+</script>
+
+#controlHeader($action 'webLinkType' $action.getText("subversion.repository.web.link.type") false $displayParameters.noHeader)
+<select id="webLinkType" name="webLinkType" onchange="handleWebLinkTypeChanged()">
+    <option></option>
+    #foreach ($currentType in $webLinkTypes)
+        <option value="$textutils.htmlEncode( $currentType.key )" #if ( $webLinkType && $webLinkType == $currentType.key ) selected="selected" #end>$textutils.htmlEncode( $currentType.name )</option>
+    #end
+</select>
+#controlFooter($action $action.getText("subversion.repository.web.link.type.description") $displayParameters.noHeader)
+
+#controlHeader($action 'viewFormat' $action.getText("subversion.repository.view.format") false $displayParameters.noHeader)
+<input type="text" id="viewFormat" name="viewFormat" #if ($viewFormat) value="$textutils.htmlEncode( $viewFormat )" #end  size="60"/>
+#controlFooter($action '' $displayParameters.noHeader)
+
+#controlHeader($action 'changesetFormat' $action.getText("subversion.repository.changeset.format") false $displayParameters.noHeader)
+<input type="text" id="changesetFormat" name="changesetFormat" #if ($changesetFormat) value="$textutils.htmlEncode( $changesetFormat )" #end  size="60"/>
+#controlFooter($action '' $displayParameters.noHeader)
+
+#controlHeader($action 'fileAddedFormat' $action.getText("subversion.repository.file.added.format") false $displayParameters.noHeader)
+<input type="text" id="fileAddedFormat" name="fileAddedFormat" #if ($fileAddedFormat) value="$textutils.htmlEncode( $fileAddedFormat )" #end  size="60"/>
+#controlFooter($action '' $displayParameters.noHeader)
+
+#controlHeader($action 'fileModifiedFormat' $action.getText("subversion.repository.file.modified.format") false $displayParameters.noHeader)
+<input type="text" id="fileModifiedFormat" name="fileModifiedFormat" #if ($fileModifiedFormat) value="$textutils.htmlEncode( $fileModifiedFormat )" #end  size="60"/>
+#controlFooter($action '' $displayParameters.noHeader)
+
+#controlHeader($action 'fileReplacedFormat' $action.getText("subversion.repository.file.replaced.format") false $displayParameters.noHeader)
+<input type="text" id="fileReplacedFormat" name="fileReplacedFormat" #if ($fileReplacedFormat) value="$textutils.htmlEncode( $fileReplacedFormat )" #end  size="60"/>
+#controlFooter($action '' $displayParameters.noHeader)
+
+#controlHeader($action 'fileDeletedFormat' $action.getText("subversion.repository.file.deleted.format") false $displayParameters.noHeader)
+<input type="text" id="fileDeletedFormat" name="fileDeletedFormat" #if ($fileDeletedFormat) value="$textutils.htmlEncode( $fileDeletedFormat )" #end  size="60"/>
+#controlFooter($action '' $displayParameters.noHeader)

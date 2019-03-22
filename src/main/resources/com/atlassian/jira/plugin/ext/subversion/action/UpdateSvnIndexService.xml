@@ -1,0 +1,7 @@
+<svnupdateservice id="svnupdateservice">
+    <description>
+        Service updating Subversion repository information in JIRA
+    </description>
+    <properties>
+    </properties>
+</svnupdateservice>
