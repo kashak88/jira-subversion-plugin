@@ -1,6 +1,7 @@
 Notes:
 The reason this plugin doesn't work in Jira 8.0.X is because org.apache.lucene was upgraded from 3.3.0 to 7.3.0. Filter class that is used by this plugin no longer exists in 7.3.0. See https://confluence.atlassian.com/adminjira/lucene-upgrade-955171970.html . Instead of reworking this plugin, we're including org.apache.lucene 3.3.0 dependency to be bundled with the .jar
-While this solution seems to work, use at own risk. I am a sys admin, not a developer. If you want an already built .jar, feel free to contact me subnetthis@gmail.com
+While this solution seems to work, use at own risk. I am a sys admin, not a developer.
+Due to many requests, I am including the built .jar
 
 Build steps:
 1) Build was done on Ubuntu 16.04 using openjdk-8-jdk and Atlassian SDK 8.0.7. Install atlassian SDK: https://developer.atlassian.com/server/framework/atlassian-sdk/downloads/
